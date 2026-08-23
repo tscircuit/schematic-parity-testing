@@ -1,0 +1,6 @@
+{
+  "$schema": "https://cdn.jsdelivr.net/npm/@tscircuit/cli/types/tscircuit.config.schema.json",
+  "pcbDisabled": true,
+  "routingDisabled": true,
+  "projectName": "TI TIDA-010076 schematic recreation"
+}
