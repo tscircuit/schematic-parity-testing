@@ -94,6 +94,7 @@ const cardTopConnectorStyleByPart: Record<
   {
     schWidth: number
     schHeight: number
+    schFacingDirection?: "left" | "right"
     schPinArrangement: {
       leftSide?: number[]
       rightSide?: number[]
@@ -113,12 +114,14 @@ const cardTopConnectorStyleByPart: Record<
   J4: {
     schWidth: 0.75,
     schHeight: 2.9,
-    schPinArrangement: { leftSide: [1, 2, 3, 4, 5, 6] },
+    schFacingDirection: "right",
+    schPinArrangement: { rightSide: [1, 2, 3, 4, 5, 6] },
   },
   J5: {
     schWidth: 0.75,
     schHeight: 2.9,
-    schPinArrangement: { rightSide: [1, 2, 3, 4, 5, 6] },
+    schFacingDirection: "left",
+    schPinArrangement: { leftSide: [1, 2, 3, 4, 5, 6] },
   },
   J6: {
     schWidth: 0.4,
@@ -379,6 +382,20 @@ const Part = ({
       sheetName === "02_card_top"
         ? cardTopConnectorStyleByPart[part.name]
         : undefined
+    // Pin headers expose schFacingDirection; generic connectors do not. The
+    // two mirrored industrial jacks must face inward toward the hierarchy
+    // blocks so their connection side matches the TI schematic.
+    if (cardTopStyle?.schFacingDirection) {
+      return (
+        <pinheader
+          {...common}
+          {...cardTopStyle}
+          pinCount={Object.keys(part.pins).length}
+          pinLabels={pinLabels}
+          manufacturerPartNumber={part.partNumber || part.libraryReference}
+        />
+      )
+    }
     return (
       <connector
         {...common}

@@ -118,8 +118,8 @@ test("J1 has all three TI rail connections and visible local wire stubs", () => 
   }
 })
 
-test("J4 and J5 preserve the mirrored Altium pin sides", () => {
-  const portSides = (name: string) => {
+test("J4 and J5 face inward toward the hierarchy boxes", () => {
+  const portDirections = (name: string) => {
     const schematicComponent = component(name)
     return elements
       .filter(
@@ -128,11 +128,18 @@ test("J4 and J5 preserve the mirrored Altium pin sides", () => {
           element.schematic_component_id ===
             schematicComponent.schematic_component_id,
       )
-      .map((port) => port.side_of_component)
+      .map((port) => ({
+        side: port.side_of_component,
+        direction: port.facing_direction,
+      }))
   }
 
-  expect(portSides("J4")).toEqual(Array(6).fill("left"))
-  expect(portSides("J5")).toEqual(Array(6).fill("right"))
+  expect(portDirections("J4")).toEqual(
+    Array(6).fill({ side: "right", direction: "right" }),
+  )
+  expect(portDirections("J5")).toEqual(
+    Array(6).fill({ side: "left", direction: "left" }),
+  )
 })
 
 test("J11 remains inside the lower-left MSP430 section", () => {
