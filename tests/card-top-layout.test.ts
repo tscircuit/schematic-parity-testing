@@ -71,6 +71,53 @@ test("J1 uses the thin three-pin header body", () => {
   expect(j1.size.height).toBeLessThanOrEqual(0.4)
 })
 
+test("J1 has all three TI rail connections and visible local wire stubs", () => {
+  const j1 = component("J1")
+  const ports = elements.filter(
+    (element) =>
+      element.type === "schematic_port" &&
+      element.schematic_component_id === j1.schematic_component_id,
+  )
+  const expectedNetByPin = new Map([
+    [1, "NET_Local_3V3"],
+    [2, "NET_PHY_VDD"],
+    [3, "NET_External_3V3"],
+  ])
+
+  expect(ports).toHaveLength(3)
+  expect(ports.every((port) => port.is_connected)).toBe(true)
+
+  for (const port of ports) {
+    const sourceTrace = elements.find(
+      (element) =>
+        element.type === "source_trace" &&
+        element.connected_source_port_ids?.includes(port.source_port_id),
+    )
+    const sourceNet = elements.find(
+      (element) =>
+        element.type === "source_net" &&
+        sourceTrace?.connected_source_net_ids?.includes(element.source_net_id),
+    )
+    const localLabel = elements.find(
+      (element) =>
+        element.type === "schematic_net_label" &&
+        element.schematic_sheet_id === "schematic_sheet_0" &&
+        element.source_net_id === sourceNet?.source_net_id &&
+        Math.abs(element.anchor_position.x - port.center.x) < 0.2 &&
+        Math.abs(element.anchor_position.y - port.center.y) < 0.001,
+    )
+    const localTrace = elements.find(
+      (element) =>
+        element.type === "schematic_trace" &&
+        element.source_trace_id === sourceTrace?.source_trace_id,
+    )
+
+    expect(sourceNet?.name).toBe(expectedNetByPin.get(port.pin_number))
+    expect(localLabel?.text).toBe(expectedNetByPin.get(port.pin_number))
+    expect(localTrace?.edges.length).toBeGreaterThan(0)
+  }
+})
+
 test("J4 and J5 preserve the mirrored Altium pin sides", () => {
   const portSides = (name: string) => {
     const schematicComponent = component(name)

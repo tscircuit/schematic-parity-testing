@@ -230,7 +230,7 @@ const Part = ({
             ? {
                 schWidth: 0.3,
                 schHeight: 0.4,
-                schPinArrangement: { rightSide: [1, 2, 3] },
+                schPinArrangement: { rightSide: [3, 2, 1] },
               }
             : {})}
           internallyConnectedPins={
@@ -352,7 +352,32 @@ const Sheet = ({
       <Part key={part.name} part={part} sheetName={sheet.name} />
     ))}
     {sheet.name === "02_card_top" && (
-      <trace from=".J2 > .pin42" to=".R1 > .pin1" />
+      <>
+        {/* Altium records 393-399: explicit local rail labels and short wire
+            stubs for J1. The importer otherwise treats them as anonymous nets. */}
+        <netlabel
+          net="NET_Local_3V3"
+          connection=".J1 > .pin1"
+          schX={-14.052}
+          schY={8.1085}
+          anchorSide="left"
+        />
+        <netlabel
+          net="NET_PHY_VDD"
+          connection=".J1 > .pin2"
+          schX={-14.052}
+          schY={8.3085}
+          anchorSide="left"
+        />
+        <netlabel
+          net="NET_External_3V3"
+          connection=".J1 > .pin3"
+          schX={-14.052}
+          schY={8.5085}
+          anchorSide="left"
+        />
+        <trace from=".J2 > .pin42" to=".R1 > .pin1" />
+      </>
     )}
   </schematicsheet>
 )
