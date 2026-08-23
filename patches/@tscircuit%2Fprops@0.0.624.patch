@@ -1,0 +1,55 @@
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 28587b3aef3e58e01083890205e88e725b1fd6a9..33b260ba09cc26a38db4795e38d16987f3edc945 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -214297,6 +214297,7 @@ interface SchematicBoxProps {
+     chipRef?: string;
+     pinLabels?: PinLabelsProp;
+     schPinArrangement?: SchematicPinArrangement;
++    schPinStyle?: SchematicPinStyle;
+     schX?: Distance;
+     schY?: Distance;
+     schSectionName?: string;
+diff --git a/dist/index.js b/dist/index.js
+index d613a385a039d6f8aaea595cbde8f470c830faa3..f50a2a34daceb1333f42396ce85492907fd6de01 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -18548,6 +18548,7 @@ var schematicBoxProps = z120.object({
+   chipRef: z120.string().optional(),
+   pinLabels: pinLabelsProp.optional(),
+   schPinArrangement: schematicPinArrangement.optional(),
++  schPinStyle: schematicPinStyle.optional(),
+   schX: distance33.optional(),
+   schY: distance33.optional(),
+   schSectionName: z120.string().optional(),
+diff --git a/lib/components/schematic-box.ts b/lib/components/schematic-box.ts
+index 8a16a5dc4be096c456bdbeec1b54697225b47e9f..454608dd258a544c20f2d9d7390590188ab0cb59 100644
+--- a/lib/components/schematic-box.ts
++++ b/lib/components/schematic-box.ts
+@@ -7,6 +7,10 @@ import {
+ import { type PinLabelsProp, pinLabelsProp } from "lib/components/chip"
+ import { expectTypesMatch } from "lib/typecheck"
+ import type { Distance } from "lib/common/distance"
++import {
++  type SchematicPinStyle,
++  schematicPinStyle,
++} from "lib/common/schematicPinStyle"
+ import { z } from "zod"
+ 
+ export const schematicBoxProps = z
+@@ -15,6 +19,7 @@ export const schematicBoxProps = z
+     chipRef: z.string().optional(),
+     pinLabels: pinLabelsProp.optional(),
+     schPinArrangement: schematicPinArrangement.optional(),
++    schPinStyle: schematicPinStyle.optional(),
+ 
+     schX: distance.optional(),
+     schY: distance.optional(),
+@@ -65,6 +70,7 @@ export interface SchematicBoxProps {
+   chipRef?: string
+   pinLabels?: PinLabelsProp
+   schPinArrangement?: SchematicPinArrangement
++  schPinStyle?: SchematicPinStyle
+   schX?: Distance
+   schY?: Distance
+   schSectionName?: string

@@ -300,6 +300,23 @@ const cardTopHierarchyBoxes = (
         leftSide: [4, 3, 14, 2, 1, 9, 10],
         rightSide: [15, 16, 7, 6, 13, 8, 11, 12, 5],
       }}
+      schPinStyle={{
+        pin4: { bottomMargin: 0.2 },
+        pin3: { bottomMargin: 1.0 },
+        pin14: { bottomMargin: 0.4 },
+        pin2: { bottomMargin: 0.2 },
+        pin1: { bottomMargin: 0.4 },
+        pin9: { bottomMargin: 0.2 },
+        pin10: { bottomMargin: 1.4 },
+        pin16: { topMargin: 0.2 },
+        pin7: { topMargin: 0.2 },
+        pin6: { topMargin: 0.2 },
+        pin13: { topMargin: 0.6 },
+        pin8: { topMargin: 0.8 },
+        pin11: { topMargin: 0.8 },
+        pin12: { topMargin: 0.8 },
+        pin5: { topMargin: 0.8, bottomMargin: 0.6 },
+      }}
       schX={3.827}
       schY={-3.383}
       width={5.04}

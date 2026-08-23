@@ -223,3 +223,37 @@ test("page 2 includes the referenced power and data hierarchy boxes", () => {
     ).toHaveLength(expected.rightPins)
   }
 })
+
+test("power hierarchy box preserves TI pin groups and rail spacing", () => {
+  const powerBox = component("U1_T1_Power_Top_Level")
+  const expectedBySide = {
+    left: {
+      pins: [4, 3, 14, 2, 1, 9, 10],
+      gaps: [0.4, 1.2, 0.6, 0.4, 0.6, 0.4],
+    },
+    right: {
+      pins: [15, 16, 7, 6, 13, 8, 11, 12, 5],
+      gaps: [0.4, 0.4, 0.4, 0.8, 1, 1, 1, 1],
+    },
+  }
+
+  expect(Object.keys(powerBox.pin_styles ?? {}).length).toBeGreaterThan(0)
+
+  for (const [side, expected] of Object.entries(expectedBySide)) {
+    const ports = elements
+      .filter(
+        (element) =>
+          element.type === "schematic_port" &&
+          element.schematic_component_id === powerBox.schematic_component_id &&
+          element.side_of_component === side,
+      )
+      .sort((upper, lower) => lower.center.y - upper.center.y)
+
+    expect(ports.map((port) => port.pin_number)).toEqual(expected.pins)
+    expect(
+      ports.slice(1).map((port, index) =>
+        Number((ports[index].center.y - port.center.y).toFixed(3)),
+      ),
+    ).toEqual(expected.gaps)
+  }
+})

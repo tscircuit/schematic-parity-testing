@@ -35,5 +35,9 @@
     "tscircuit": "latest",
     "typescript": "^5.0.0"
   },
-  "author": "tscircuit"
+  "author": "tscircuit",
+  "patchedDependencies": {
+    "@tscircuit/props@0.0.624": "patches/@tscircuit%2Fprops@0.0.624.patch",
+    "@tscircuit/core@0.0.1726": "patches/@tscircuit%2Fcore@0.0.1726.patch"
+  }
 }

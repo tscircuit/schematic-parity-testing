@@ -1,0 +1,23 @@
+diff --git a/dist/index.js b/dist/index.js
+index 70816036c327c0ab013ec902400caf5c10807f68..aa2bf78a5414c40bad431e09165f54b26932b8bd 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -28265,6 +28265,10 @@ var SchematicBox_doInitialSchematicComponentRender = (schematicBox) => {
+     schPinSpacing: 0.2,
+     pinCount: schematicBoxPinLabels.length,
+     schPortArrangement: props.schPinArrangement,
++    numericSchPinStyle: getNumericSchPinStyle(
++      props.schPinStyle,
++      pinLabelsByPinKey
++    ),
+     pinLabels: pinLabelsByPinKey
+   });
+   const center = schematicBox._getGlobalSchematicPositionBeforeLayout();
+@@ -28284,6 +28288,7 @@ var SchematicBox_doInitialSchematicComponentRender = (schematicBox) => {
+     port_arrangement: underscorifyPortArrangement(props.schPinArrangement),
+     port_labels: portLabels,
+     pin_spacing: 0.2,
++    pin_styles: underscorifyPinStyles(props.schPinStyle, props.pinLabels),
+     schematic_sheet_id: schematicSheetId
+   });
+   schematicBox.schematic_component_id = schematicComponent.schematic_component_id;
