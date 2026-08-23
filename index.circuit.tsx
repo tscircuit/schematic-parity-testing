@@ -1,10 +1,17 @@
 import type { TidaPart } from "./src/generated/tida010076-data"
 import { tida010076Sheets } from "./src/generated/tida010076-data"
 
-const netConnections = (part: TidaPart) =>
+const netConnections = (part: TidaPart, sheetName: string) =>
   Object.fromEntries(
     Object.entries(part.pins)
-      .filter(([, pin]) => pin.net)
+      .filter(
+        ([, pin]) =>
+          pin.net &&
+          !(
+            sheetName === "02_card_top" &&
+            /^NET_02_card_top_N\d+$/.test(pin.net)
+          ),
+      )
       .map(([pin, data]) => [pin, `net.${data.net}`]),
   )
 
@@ -54,16 +61,122 @@ const getDiodeVariant = (part: TidaPart) => {
   return "standard" as const
 }
 
-const Part = ({ part }: { part: TidaPart }) => {
+const cardTopSectionByPart: Record<string, string> = {
+  C1: "msp430_programming",
+  J10: "msp430_programming",
+  J11: "msp430_programming",
+  R2: "msp430_programming",
+}
+
+const cardTopPlacementOffsetByPart: Record<
+  string,
+  { x?: number; y?: number }
+> = {
+  // The J4/J5 Altium origins sit at the upper inner corner rather than the
+  // center of their tall connector bodies.
+  J4: { x: -0.75, y: -1.06 },
+  J5: { x: 0.75, y: -1.06 },
+}
+
+const j2LeftPins = Array.from({ length: 20 }, (_, row) => [
+  row * 6 + 1,
+  row * 6 + 2,
+  row * 6 + 3,
+]).flat()
+const j2RightPins = Array.from({ length: 20 }, (_, row) => [
+  row * 6 + 6,
+  row * 6 + 5,
+  row * 6 + 4,
+]).flat()
+
+const cardTopConnectorStyleByPart: Record<
+  string,
+  {
+    schWidth: number
+    schHeight: number
+    schPinArrangement: {
+      leftSide?: number[]
+      rightSide?: number[]
+    }
+  }
+> = {
+  J2: {
+    schWidth: 2.2,
+    schHeight: 11.8,
+    schPinArrangement: { leftSide: j2LeftPins, rightSide: j2RightPins },
+  },
+  J3: {
+    schWidth: 0.75,
+    schHeight: 1.15,
+    schPinArrangement: { leftSide: [1, 3, 5], rightSide: [2, 4, 6] },
+  },
+  J4: {
+    schWidth: 0.75,
+    schHeight: 2.9,
+    schPinArrangement: { leftSide: [1, 2, 3, 4, 5, 6] },
+  },
+  J5: {
+    schWidth: 0.75,
+    schHeight: 2.9,
+    schPinArrangement: { rightSide: [1, 2, 3, 4, 5, 6] },
+  },
+  J6: {
+    schWidth: 0.4,
+    schHeight: 0.6,
+    schPinArrangement: { leftSide: [1, 2] },
+  },
+  J7: {
+    schWidth: 0.4,
+    schHeight: 0.6,
+    schPinArrangement: { leftSide: [1, 2] },
+  },
+  J8: {
+    schWidth: 0.4,
+    schHeight: 0.6,
+    schPinArrangement: { leftSide: [1, 2] },
+  },
+  J9: {
+    schWidth: 0.4,
+    schHeight: 0.6,
+    schPinArrangement: { leftSide: [1, 2] },
+  },
+  J11: {
+    schWidth: 0.6,
+    schHeight: 1.6,
+    schPinArrangement: {
+      leftSide: [1, 3, 5, 7, 9, 11, 13],
+      rightSide: [2, 4, 6, 8, 10, 12, 14],
+    },
+  },
+}
+
+const Part = ({
+  part,
+  sheetName,
+}: {
+  part: TidaPart
+  sheetName: string
+}) => {
+  const isCardTop = sheetName === "02_card_top"
+  const cardTopOffset = cardTopPlacementOffsetByPart[part.name] ?? {}
   const placement = {
     name: part.name,
-    schX: part.schX,
-    schY: part.schY,
+    // Altium's page origin is at the lower left. The first import used the
+    // opposite Y sign and an overly compressed scale for this ANSI-B sheet.
+    schX: isCardTop
+      ? part.schX * 1.4 + (cardTopOffset.x ?? 0)
+      : part.schX,
+    schY: isCardTop
+      ? part.schY * -1.45 + (cardTopOffset.y ?? 0)
+      : part.schY,
     schRotation: part.schRotation,
+    schSectionName: isCardTop
+      ? (cardTopSectionByPart[part.name] ?? "card_top_unboxed")
+      : undefined,
   }
   const common = {
     ...placement,
-    connections: netConnections(part),
+    connections: netConnections(part, sheetName),
   }
   const pinLabels = Object.fromEntries(
     Object.entries(part.pins).map(([pin, data]) => [
@@ -113,6 +226,13 @@ const Part = ({ part }: { part: TidaPart }) => {
           {...common}
           pinCount={pinCount}
           pinLabels={pinLabels}
+          {...(sheetName === "02_card_top" && part.name === "J1"
+            ? {
+                schWidth: 0.3,
+                schHeight: 0.4,
+                schPinArrangement: { rightSide: [1, 2, 3] },
+              }
+            : {})}
           internallyConnectedPins={
             part.kind === "nettie" ? [["pin1", "pin2"]] : undefined
           }
@@ -121,9 +241,14 @@ const Part = ({ part }: { part: TidaPart }) => {
     }
   }
   if (part.kind === "connector") {
+    const cardTopStyle =
+      sheetName === "02_card_top"
+        ? cardTopConnectorStyleByPart[part.name]
+        : undefined
     return (
       <connector
         {...common}
+        {...cardTopStyle}
         pinCount={Object.keys(part.pins).length}
         pinLabels={pinLabels}
         manufacturerPartNumber={part.partNumber || part.libraryReference}
@@ -188,9 +313,47 @@ const Sheet = ({
     displayName={sheet.title}
     sheetIndex={sheetIndex}
   >
+    {sheet.name === "02_card_top" && (
+      <>
+        <schematicsection name="msp430_programming" />
+        <schematicpath
+          points={[
+            { x: -15.31, y: 10.05 },
+            { x: -15.31, y: -4.25 },
+            { x: -6.35, y: -4.25 },
+            { x: -6.35, y: 3.48 },
+            { x: -1.87, y: 3.48 },
+            { x: -1.87, y: 10.05 },
+            { x: -15.31, y: 10.05 },
+          ]}
+          strokeWidth={0.03}
+          strokeColor="#000000"
+        />
+        <schematictext
+          text="Connect with K2GICE expansion connector"
+          schX={-10.08}
+          schY={9.67}
+          fontSize={0.28}
+        />
+        <schematicbox
+          name="msp430_programming_outline"
+          schX={-10.83}
+          schY={-6.96}
+          width={8.96}
+          height={5.03}
+          title="MSP430 Programming Connector"
+          titleAlignment="top_center"
+          titleInside
+          titleFontSize={0.28}
+        />
+      </>
+    )}
     {sheet.parts.map((part) => (
-      <Part key={part.name} part={part} />
+      <Part key={part.name} part={part} sheetName={sheet.name} />
     ))}
+    {sheet.name === "02_card_top" && (
+      <trace from=".J2 > .pin42" to=".R1 > .pin1" />
+    )}
   </schematicsheet>
 )
 
