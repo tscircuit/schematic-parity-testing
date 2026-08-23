@@ -1,5 +1,6 @@
 import type { TidaPart } from "./src/generated/tida010076-data"
 import { tida010076Sheets } from "./src/generated/tida010076-data"
+import { Page03PowerTop } from "./src/page-03-power-top"
 
 const netConnections = (part: TidaPart, sheetName: string) =>
   Object.fromEntries(
@@ -490,6 +491,11 @@ const Part = ({
   )
 }
 
+const getSchematicSheetName = (sheetName: string) => {
+  if (sheetName === "03_power_top") return "page_03"
+  return sheetName
+}
+
 const Sheet = ({
   sheet,
   sheetIndex,
@@ -498,7 +504,7 @@ const Sheet = ({
   sheetIndex: number
 }) => (
   <schematicsheet
-    name={sheet.name}
+    name={getSchematicSheetName(sheet.name)}
     displayName={sheet.title}
     sheetIndex={sheetIndex}
   >
@@ -537,9 +543,11 @@ const Sheet = ({
         />
       </>
     )}
-    {sheet.parts.map((part) => (
-      <Part key={part.name} part={part} sheetName={sheet.name} />
-    ))}
+    {sheet.name === "03_power_top" && <Page03PowerTop />}
+    {sheet.name !== "03_power_top" &&
+      sheet.parts.map((part) => (
+        <Part key={part.name} part={part} sheetName={sheet.name} />
+      ))}
     {sheet.name === "02_card_top" && (
       <>
         {cardTopHierarchyBoxes}

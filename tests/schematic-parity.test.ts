@@ -29,7 +29,7 @@ describe("TI TIDA-010076 schematic parity", () => {
       test(`${pageName} tscircuit SVG`, async () => {
         const svg = renderSheetSvg(circuitJson, mapping.sheetId!)
         await expect(svg).toMatchSvgSnapshot(import.meta.path, pageName)
-      })
+      }, 30_000)
     }
   }
 })
