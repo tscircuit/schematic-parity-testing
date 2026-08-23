@@ -1,6 +1,9 @@
 import type { TidaPart } from "./src/generated/tida010076-data"
 import { tida010076Sheets } from "./src/generated/tida010076-data"
 
+const P = (part: string, pin: string | number) =>
+  `${part} > .${typeof pin === "number" ? `pin${pin}` : pin}`
+
 const netConnections = (part: TidaPart, sheetName: string) =>
   Object.fromEntries(
     Object.entries(part.pins)
@@ -490,6 +493,183 @@ const Part = ({
   )
 }
 
+const IdealDiodeSheet = () => (
+  <>
+    <schematicsection name="ideal_diode" displayName="" />
+
+    <mosfet
+      name="Q1"
+      displayName="Q1"
+      channelType="n"
+      mosfetMode="enhancement"
+      symbolSourceSide="left"
+      symbolDrainSide="right"
+      symbolGateSide="bottom"
+      schSectionName="ideal_diode"
+      schX={0}
+      schY={5.2}
+    />
+
+    <chip
+      name="U2"
+      displayName="U2"
+      pinLabels={{
+        pin1: "VCAP",
+        pin2: "GND",
+        pin3: "EN",
+        pin4: "CATHODE",
+        pin5: "GATE",
+        pin6: "ANODE",
+      }}
+      schPinArrangement={{
+        topSide: [5, 4, 2],
+        bottomSide: [6, 1, 3],
+      }}
+      schSectionName="ideal_diode"
+      schX={0}
+      schY={2}
+      schWidth={1.9}
+      schHeight={2.9}
+    />
+
+    <capacitor
+      name="C6"
+      displayName="C6"
+      capacitance="0.022uF"
+      maxVoltageRating="100V"
+      manufacturerPartNumber="GRM21BR72A223KA01L"
+      schShowRatings
+      schOrientation="vertical"
+      schSectionName="ideal_diode"
+      schX={-4}
+      schY={2}
+    />
+    <capacitor
+      name="C7"
+      displayName="C7"
+      capacitance="2.2uF"
+      maxVoltageRating="100V"
+      manufacturerPartNumber="GRM31CR72A225KA73L"
+      schShowRatings
+      schOrientation="vertical"
+      schSectionName="ideal_diode"
+      schX={4}
+      schY={2}
+    />
+    <capacitor
+      name="C8"
+      displayName="C8"
+      capacitance="1uF"
+      maxVoltageRating="25V"
+      manufacturerPartNumber="GCM188R71E105KA64D"
+      schShowRatings
+      schOrientation="horizontal"
+      schSectionName="ideal_diode"
+      schX={0}
+      schY={-0.72}
+    />
+
+    <trace
+      name="48V_Supply_In"
+      from={P(".C6", 1)}
+      to={P(".Q1", "source")}
+    />
+    <trace
+      name="48V_Supply_In"
+      from="net.NET_48V_Supply_In"
+      to={P(".C6", 1)}
+    />
+    <trace
+      name="48V_Supply_In"
+      from={P(".U2", 6)}
+      to={P(".Q1", "source")}
+      schematicRouteHints={[
+        { x: -2.2, y: -0.04 },
+        { x: -2.2, y: 5.51 },
+      ]}
+    />
+    <trace
+      name="48V_Supply_In"
+      from={P(".U2", 3)}
+      to={P(".U2", 6)}
+      schematicRouteHints={[{ x: 0, y: -0.04 }]}
+    />
+    <trace
+      name="48V_Supply_In"
+      from={P(".C8", 2)}
+      to={P(".U2", 6)}
+    />
+
+    <trace
+      name="48V_Vin"
+      from={P(".Q1", "drain")}
+      to={P(".C7", 1)}
+    />
+    <trace
+      name="48V_Vin"
+      from={P(".C7", 1)}
+      to="net.NET_48V_Vin"
+    />
+    <trace
+      name="48V_Vin"
+      from={P(".U2", 4)}
+      to={P(".Q1", "drain")}
+      schematicRouteHints={[
+        { x: 2.2, y: 3.92 },
+        { x: 2.2, y: 5.5 },
+      ]}
+    />
+
+    <trace name="gate_drive" from={P(".U2", 5)} to={P(".Q1", "gate")} />
+    <trace name="vcap" from={P(".U2", 1)} to={P(".C8", 1)} />
+    <trace
+      name="GND"
+      from={P(".C6", 2)}
+      to={P(".C7", 2)}
+      schematicRouteHints={[
+        { x: -4, y: -1.52 },
+        { x: 4, y: -1.52 },
+      ]}
+    />
+    <trace name="GND" from="net.NET_GND" to={P(".C6", 2)} />
+    <trace
+      name="GND"
+      from={P(".U2", 2)}
+      to={P(".C7", 2)}
+      schematicRouteHints={[
+        { x: 3.2, y: 3.92 },
+        { x: 3.2, y: -1.52 },
+      ]}
+    />
+    <trace
+      name="GND"
+      from={P(".U2", 2)}
+      to="net.NET_GND"
+      schematicRouteHints={[
+        { x: 0.7, y: 3.92 },
+        { x: 0.7, y: -1.52 },
+      ]}
+    />
+
+    <schematictext
+      text="DMT6007LFG-13"
+      schX={-1.85}
+      schY={4.7}
+      fontSize={0.17}
+      anchor="left"
+      color="#006464"
+    />
+    <schematictext
+      text="LM74700QDBVRQ1"
+      schX={0.82}
+      schY={3.55}
+      fontSize={0.17}
+      anchor="left"
+      color="#006464"
+    />
+  </>
+)
+
 const Sheet = ({
   sheet,
   sheetIndex,
@@ -537,9 +717,13 @@ const Sheet = ({
         />
       </>
     )}
-    {sheet.parts.map((part) => (
-      <Part key={part.name} part={part} sheetName={sheet.name} />
-    ))}
+    {sheet.name === "04_ideal_diode" ? (
+      <IdealDiodeSheet />
+    ) : (
+      sheet.parts.map((part) => (
+        <Part key={part.name} part={part} sheetName={sheet.name} />
+      ))
+    )}
     {sheet.name === "02_card_top" && (
       <>
         {cardTopHierarchyBoxes}
