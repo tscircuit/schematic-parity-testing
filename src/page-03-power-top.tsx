@@ -325,7 +325,7 @@ export function Page03PowerTop() {
         inductance="330nH"
         schSectionName="page_03_content"
         schSheetName="page_03"
-        schX={13.35}
+        schX={13.55}
         schY={3.2}
         schOrientation="horizontal"
       />
