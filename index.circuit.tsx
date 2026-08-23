@@ -95,6 +95,13 @@ const cardTopConnectorStyleByPart: Record<
     schWidth: number
     schHeight: number
     schFacingDirection?: "left" | "right"
+    schPinStyle?: Record<
+      string,
+      {
+        topMargin?: number
+        bottomMargin?: number
+      }
+    >
     schPinArrangement: {
       leftSide?: number[]
       rightSide?: number[]
@@ -116,12 +123,26 @@ const cardTopConnectorStyleByPart: Record<
     schHeight: 2.9,
     schFacingDirection: "right",
     schPinArrangement: { rightSide: [1, 2, 3, 4, 5, 6] },
+    schPinStyle: {
+      pin2: { topMargin: 0.2 },
+      pin3: { topMargin: 0.4 },
+      pin4: { topMargin: 0.2 },
+      pin5: { topMargin: 0.2 },
+      pin6: { topMargin: 0.2 },
+    },
   },
   J5: {
     schWidth: 0.75,
     schHeight: 2.9,
     schFacingDirection: "left",
     schPinArrangement: { leftSide: [1, 2, 3, 4, 5, 6] },
+    schPinStyle: {
+      pin1: { bottomMargin: 0.2 },
+      pin2: { bottomMargin: 0.4 },
+      pin3: { bottomMargin: 0.2 },
+      pin4: { bottomMargin: 0.2 },
+      pin5: { bottomMargin: 0.2 },
+    },
   },
   J6: {
     schWidth: 0.4,

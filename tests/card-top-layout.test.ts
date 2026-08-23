@@ -142,6 +142,32 @@ test("J4 and J5 face inward toward the hierarchy boxes", () => {
   )
 })
 
+test("J4 and J5 spread the signal and ground pins like the TI jacks", () => {
+  const pinGaps = (name: string) => {
+    const schematicComponent = component(name)
+    expect(
+      Object.values(schematicComponent.pin_styles ?? {}).some(
+        (style: any) => style.top_margin || style.bottom_margin,
+      ),
+    ).toBe(true)
+    const ports = elements
+      .filter(
+        (element) =>
+          element.type === "schematic_port" &&
+          element.schematic_component_id ===
+            schematicComponent.schematic_component_id,
+      )
+      .sort((left, right) => left.pin_number - right.pin_number)
+
+    return ports.slice(1).map((port, index) =>
+      Number(Math.abs(ports[index].center.y - port.center.y).toFixed(3)),
+    )
+  }
+
+  expect(pinGaps("J4")).toEqual([0.4, 0.6, 0.4, 0.4, 0.4])
+  expect(pinGaps("J5")).toEqual([0.4, 0.6, 0.4, 0.4, 0.4])
+})
+
 test("J11 remains inside the lower-left MSP430 section", () => {
   const j11 = component("J11")
   const sectionBox = elements.find(
