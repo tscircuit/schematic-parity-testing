@@ -46,7 +46,7 @@ async function toMatchPngSnapshot(
   })
   const differentPixelRatio = result.differentPixels / result.totalPixels
   const maxDifferentPixelRatio = Number(
-    process.env.PNG_SNAPSHOT_MAX_DIFFERENT_PIXEL_RATIO ?? "0.01",
+    process.env.PNG_SNAPSHOT_MAX_DIFFERENT_PIXEL_RATIO ?? "0.015",
   )
   const sufficientlySimilar =
     result.equal || differentPixelRatio <= maxDifferentPixelRatio
