@@ -41,10 +41,18 @@ async function toMatchPngSnapshot(
   const result = await looksSame(received, existing, {
     strict: false,
     tolerance: 2,
+    antialiasingTolerance: 10,
+    createDiffImage: true,
   })
+  const differentPixelRatio = result.differentPixels / result.totalPixels
+  const maxDifferentPixelRatio = Number(
+    process.env.PNG_SNAPSHOT_MAX_DIFFERENT_PIXEL_RATIO ?? "0.01",
+  )
+  const sufficientlySimilar =
+    result.equal || differentPixelRatio <= maxDifferentPixelRatio
 
   if (updateSnapshots) {
-    if (!forceUpdate && result.equal) {
+    if (!forceUpdate && sufficientlySimilar) {
       return { pass: true, message: () => "PNG snapshot matches" }
     }
     console.log(`Updating PNG snapshot at ${snapshotPath}`)
@@ -55,8 +63,12 @@ async function toMatchPngSnapshot(
     }
   }
 
-  if (result.equal) {
-    return { pass: true, message: () => "PNG snapshot matches" }
+  if (sufficientlySimilar) {
+    return {
+      pass: true,
+      message: () =>
+        `PNG snapshot matches (${(differentPixelRatio * 100).toFixed(3)}% perceptual pixel difference)`,
+    }
   }
 
   const diffPath = snapshotPath.replace(/\.snap\.png$/, ".diff.png")
@@ -69,7 +81,8 @@ async function toMatchPngSnapshot(
 
   return {
     pass: false,
-    message: () => `PNG snapshot does not match. Diff saved at ${diffPath}`,
+    message: () =>
+      `PNG snapshot does not match: ${(differentPixelRatio * 100).toFixed(3)}% of pixels differ (limit ${(maxDifferentPixelRatio * 100).toFixed(3)}%). Diff saved at ${diffPath}`,
   }
 }
 

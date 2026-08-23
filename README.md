@@ -37,8 +37,10 @@ explicit no-corresponding-sheet panel.
 The suite follows the visual matcher pattern used by `bun-match-svg` and the
 PNG matcher in `tscircuit/poppygl`:
 
-- `tests/fixtures/png-matcher.ts` compares PNG buffers with `looks-same` and
-  writes magenta `.diff.png` images on failures.
+- `tests/fixtures/png-matcher.ts` compares PNG buffers with `looks-same`, allows
+  up to 1% perceptual pixel variance for cross-platform font antialiasing, and
+  writes magenta `.diff.png` images on failures. Exact schematic structure is
+  still guarded by the SVG snapshots.
 - `tests/stack-pngs.ts` is the PNG equivalent of `stack-svgs`; it normalizes and
   labels two panels before composing them horizontally with `sharp`.
 - `tests/schematic-parity.test.ts` contains 17 paired PNG checks and 15 raw
