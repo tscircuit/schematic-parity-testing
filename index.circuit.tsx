@@ -569,6 +569,7 @@ const Sheet = ({
 
 export default () => (
   <board width="10mm" height="10mm" routingDisabled schRelative>
+    <net name="NET_AGND" isGroundNet />
     <chip
       name="U1_T1_Power_Top_Level"
       manufacturerPartNumber="T1_Power_Top_Level.SchDoc"
