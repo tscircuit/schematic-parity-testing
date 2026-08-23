@@ -149,3 +149,44 @@ test("J11 remains inside the lower-left MSP430 section", () => {
   expect(j11.center.y).toBeGreaterThan(sectionBox.y)
   expect(j11.center.y).toBeLessThan(sectionBox.y + sectionBox.height)
 })
+
+test("page 2 includes the referenced power and data hierarchy boxes", () => {
+  const expectedBoxes = [
+    {
+      name: "U1_T1_Power_Top_Level",
+      width: 5.04,
+      height: 6.767,
+      pinCount: 16,
+      leftPins: 7,
+      rightPins: 9,
+    },
+    {
+      name: "U1_T1_Data_Top_Level",
+      width: 5.04,
+      height: 7.54,
+      pinCount: 43,
+      leftPins: 30,
+      rightPins: 13,
+    },
+  ]
+
+  for (const expected of expectedBoxes) {
+    const hierarchyBox = component(expected.name)
+    const ports = elements.filter(
+      (element) =>
+        element.type === "schematic_port" &&
+        element.schematic_component_id === hierarchyBox.schematic_component_id,
+    )
+
+    expect(hierarchyBox.is_box_with_pins).toBe(true)
+    expect(hierarchyBox.size.width).toBeCloseTo(expected.width)
+    expect(hierarchyBox.size.height).toBeCloseTo(expected.height)
+    expect(ports).toHaveLength(expected.pinCount)
+    expect(
+      ports.filter((port) => port.side_of_component === "left"),
+    ).toHaveLength(expected.leftPins)
+    expect(
+      ports.filter((port) => port.side_of_component === "right"),
+    ).toHaveLength(expected.rightPins)
+  }
+})

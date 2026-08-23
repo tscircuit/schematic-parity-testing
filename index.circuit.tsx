@@ -150,6 +150,140 @@ const cardTopConnectorStyleByPart: Record<
   },
 }
 
+const powerTopPinNames = [
+  "SCL",
+  "SDA",
+  "Power_INPUT_P",
+  "Power_INPUT_N",
+  "GND",
+  "Power_OUTPUT_P",
+  "Power_OUTPUT_N",
+  "48V_Vout2",
+  "RST",
+  "TEST",
+  "24Vor12V_out",
+  "5V_out",
+  "48V_Supply_In",
+  "MSP_3V3",
+  "Local_3V3",
+  "Local_1V",
+]
+
+const dataTopPinNames = [
+  "PHY_P1",
+  "PHY_P2",
+  "PHY_N1",
+  "PHY_N2",
+  "AGND",
+  "PHY_VDD",
+  "PRU0_MII_TX_D0_2",
+  "PRU0_MII_TX_EN2",
+  "PRU0_MII_TX_CLK1",
+  "PRU0_MII_TX_D1_1",
+  "PRU0_MII_TX_D1_2",
+  "PRU0_MII_TX_CLK2",
+  "PRU0_MII_TX_D0_1",
+  "PRU0_MII_TX_EN1",
+  "PRU0_MII_TX_D3_1",
+  "PRU0_MII_TX_D3_2",
+  "PRU0_MII_TX_D2_1",
+  "PRU0_MII_TX_D2_2",
+  "PRU0_MII_RXDV2",
+  "PRU0_MII_RX_D2_1",
+  "PRU0_MII_RXDV1",
+  "PRU0_MII_RX_D0_1",
+  "PRU0_MII_RX_D2_2",
+  "PRU0_MII_RX_D3_1",
+  "PRU0_MII_RX_D3_2",
+  "PRU0_MII_RX_CLK1",
+  "PRU0_MII_RX_D1_1",
+  "PRU0_MII_RX_D1_2",
+  "PRU0_MII_RXER1",
+  "PRU0_MII_RX_D0_2",
+  "PRU0_MII_RX_CLK2",
+  "PRU0_MII_RXER2",
+  "PRU0_MII_INT2",
+  "PRU0_MII_INH1",
+  "PRU0_MDC",
+  "PRU0_MII_INH2",
+  "PRU0_MII_RESETn2",
+  "PRU0_MII_RXLINK2",
+  "PRU0_MDIO",
+  "PRU0_MII_RXLINK1",
+  "PRU0_MII_INT1",
+  "PRU0_MII_RESETn1",
+  "PHY_VDD_1V",
+]
+
+const pinLabelsFromNames = (names: string[]) =>
+  Object.fromEntries(names.map((name, index) => [`pin${index + 1}`, name]))
+
+const powerTopPinLabels = pinLabelsFromNames(powerTopPinNames)
+const dataTopPinLabels = pinLabelsFromNames(dataTopPinNames)
+
+const hierarchyNetNameByPinName: Record<string, string> = {
+  SCL: "I2C_SCL0",
+  SDA: "I2C_SDA0",
+  PHY_VDD_1V: "Local_1V",
+}
+
+const connectionsFromPinNames = (
+  names: string[],
+  excludedPins: number[] = [],
+) =>
+  Object.fromEntries(
+    names
+      .map((name, index) => ({ name, pin: index + 1 }))
+      .filter(({ pin }) => !excludedPins.includes(pin))
+      .map(({ name, pin }) => [
+        `pin${pin}`,
+        `net.NET_${hierarchyNetNameByPinName[name] ?? name}`,
+      ]),
+  )
+
+const powerTopConnections = connectionsFromPinNames(
+  powerTopPinNames,
+  [3, 4, 6, 7, 8, 11, 12, 13],
+)
+const dataTopConnections = connectionsFromPinNames(
+  dataTopPinNames,
+  [1, 2, 3, 4],
+)
+
+const cardTopHierarchyBoxes = (
+  <>
+    <schematicbox
+      name="U1_T1_Data_Top_Level"
+      chipRef=".U1_T1_Data_Top_Level"
+      pinLabels={dataTopPinLabels}
+      schPinArrangement={{
+        leftSide: [
+          9, 12, 14, 8, 13, 7, 10, 11, 17, 18, 15, 16, 29, 32, 21, 19, 26, 31,
+          22, 30, 27, 28, 20, 23, 24, 25, 6, 43, 3, 1,
+        ],
+        rightSide: [40, 38, 35, 39, 34, 36, 41, 33, 42, 37, 5, 4, 2],
+      }}
+      schX={3.827}
+      schY={4.543}
+      width={5.04}
+      height={7.54}
+    />
+    <schematicbox
+      name="U1_T1_Power_Top_Level"
+      chipRef=".U1_T1_Power_Top_Level"
+      pinLabels={powerTopPinLabels}
+      schPinArrangement={{
+        leftSide: [4, 3, 14, 2, 1, 9, 10],
+        rightSide: [15, 16, 7, 6, 13, 8, 11, 12, 5],
+      }}
+      schX={3.827}
+      schY={-3.383}
+      width={5.04}
+      height={6.767}
+    />
+  </>
+)
+
 const Part = ({
   part,
   sheetName,
@@ -353,6 +487,7 @@ const Sheet = ({
     ))}
     {sheet.name === "02_card_top" && (
       <>
+        {cardTopHierarchyBoxes}
         {/* Altium records 393-399: explicit local rail labels and short wire
             stubs for J1. The importer otherwise treats them as anonymous nets. */}
         <netlabel
@@ -376,6 +511,18 @@ const Sheet = ({
           schY={8.5085}
           anchorSide="left"
         />
+        <trace from=".U1_T1_Power_Top_Level > .pin3" to=".J4 > .pin1" />
+        <trace from=".U1_T1_Power_Top_Level > .pin4" to=".J4 > .pin2" />
+        <trace from=".U1_T1_Power_Top_Level > .pin6" to=".J5 > .pin1" />
+        <trace from=".U1_T1_Power_Top_Level > .pin7" to=".J5 > .pin2" />
+        <trace from=".U1_T1_Power_Top_Level > .pin8" to=".J7 > .pin1" />
+        <trace from=".U1_T1_Power_Top_Level > .pin11" to=".J8 > .pin1" />
+        <trace from=".U1_T1_Power_Top_Level > .pin12" to=".J9 > .pin1" />
+        <trace from=".U1_T1_Power_Top_Level > .pin13" to=".J6 > .pin1" />
+        <trace from=".U1_T1_Data_Top_Level > .pin1" to=".J4 > .pin2" />
+        <trace from=".U1_T1_Data_Top_Level > .pin2" to=".J5 > .pin2" />
+        <trace from=".U1_T1_Data_Top_Level > .pin3" to=".J4 > .pin1" />
+        <trace from=".U1_T1_Data_Top_Level > .pin4" to=".J5 > .pin1" />
         <trace from=".J2 > .pin42" to=".R1 > .pin1" />
       </>
     )}
@@ -384,6 +531,18 @@ const Sheet = ({
 
 export default () => (
   <board width="10mm" height="10mm" routingDisabled schRelative>
+    <chip
+      name="U1_T1_Power_Top_Level"
+      manufacturerPartNumber="T1_Power_Top_Level.SchDoc"
+      pinLabels={powerTopPinLabels}
+      connections={powerTopConnections}
+    />
+    <chip
+      name="U1_T1_Data_Top_Level"
+      manufacturerPartNumber="T1_Data_Top_Level.SchDoc"
+      pinLabels={dataTopPinLabels}
+      connections={dataTopConnections}
+    />
     {tida010076Sheets.map((sheet, sheetIndex) => (
       <Sheet key={sheet.name} sheet={sheet} sheetIndex={sheetIndex + 1} />
     ))}
