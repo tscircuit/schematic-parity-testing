@@ -11,6 +11,7 @@ async function toMatchPngSnapshot(
     | Promise<Buffer | Uint8Array>,
   testPathOriginal: string,
   pngName?: string,
+  snapshotMaxDifferentPixelRatio?: number,
 ): Promise<MatcherResult> {
   const received = Buffer.from(await receivedMaybePromise)
   const testPath = testPathOriginal.replace(/\.test\.[cm]?[jt]sx?$/, "")
@@ -46,7 +47,9 @@ async function toMatchPngSnapshot(
   })
   const differentPixelRatio = result.differentPixels / result.totalPixels
   const maxDifferentPixelRatio = Number(
-    process.env.PNG_SNAPSHOT_MAX_DIFFERENT_PIXEL_RATIO ?? "0.015",
+    process.env.PNG_SNAPSHOT_MAX_DIFFERENT_PIXEL_RATIO ??
+      snapshotMaxDifferentPixelRatio ??
+      "0.015",
   )
   const sufficientlySimilar =
     result.equal || differentPixelRatio <= maxDifferentPixelRatio
@@ -93,6 +96,7 @@ declare module "bun:test" {
     toMatchPngSnapshot(
       testPath: string,
       pngName?: string,
+      maxDifferentPixelRatio?: number,
     ): Promise<MatcherResult>
   }
 }
