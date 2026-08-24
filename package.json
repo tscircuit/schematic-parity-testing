@@ -25,6 +25,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@tscircuit/schematic-trace-solver": "^0.0.145",
     "@types/bun": "^1.4.0",
     "@types/react": "latest",
     "bun-match-svg": "0.0.17",
