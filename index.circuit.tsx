@@ -280,6 +280,7 @@ const cardTopHierarchyBoxes = (
     <schematicbox
       name="U1_T1_Data_Top_Level"
       chipRef=".U1_T1_Data_Top_Level"
+      schSectionName="card_top_unboxed"
       pinLabels={dataTopPinLabels}
       schPinArrangement={{
         leftSide: [
@@ -296,6 +297,7 @@ const cardTopHierarchyBoxes = (
     <schematicbox
       name="U1_T1_Power_Top_Level"
       chipRef=".U1_T1_Power_Top_Level"
+      schSectionName="card_top_unboxed"
       pinLabels={powerTopPinLabels}
       schPinArrangement={{
         leftSide: [4, 3, 14, 2, 1, 9, 10],
@@ -595,6 +597,18 @@ const Sheet = ({
 export default () => (
   <board width="10mm" height="10mm" routingDisabled schRelative>
     <net name="NET_AGND" isGroundNet />
+    <net name="NET_BUCK_GND" isGroundNet />
+    <net name="NET_GND" isGroundNet />
+    <net name="NET_ILIM_GND" isGroundNet />
+    <net name="NET_INA_GND" isGroundNet />
+    <net name="NET_LM10500_GND" isGroundNet />
+    <net name="NET_LM10500_SGNDa" isGroundNet />
+    <net name="NET_LM10500_SGNDb" isGroundNet />
+    <net name="NET_LMZM33603_GND" isGroundNet />
+    <net name="NET_LP2951_GND" isGroundNet />
+    <net name="NET_PGND" isGroundNet />
+    <net name="NET_SGND_F1" isGroundNet />
+    <net name="NET_SGND_F2" isGroundNet />
     <chip
       name="U1_T1_Power_Top_Level"
       manufacturerPartNumber="T1_Power_Top_Level.SchDoc"

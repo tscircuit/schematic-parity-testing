@@ -5,6 +5,7 @@
     "": {
       "name": "@tsci/seveibar.ple",
       "devDependencies": {
+        "@tscircuit/schematic-trace-solver": "^0.0.145",
         "@types/bun": "^1.4.0",
         "@types/react": "latest",
         "bun-match-svg": "0.0.17",
@@ -274,7 +275,7 @@
 
     "@tscircuit/schematic-match-adapt": ["@tscircuit/schematic-match-adapt@0.0.18", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-LpXF7aSmP4xUZN1gdrU/YdAnotJ+oKW2a4YzGB6wNTXnw5+Yn0w/bPnReT4A+nNUrVJ9kyjgnXQkSlkhiejQGg=="],
 
-    "@tscircuit/schematic-trace-solver": ["@tscircuit/schematic-trace-solver@0.0.140", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-exMiHEWd0t+7XucW9LLPACE8TUov12Ns2la7k9P31uHgMrrjm2PriOrttIWoXI7wPTV7F/3+uACeJUAJN+Y2BA=="],
+    "@tscircuit/schematic-trace-solver": ["@tscircuit/schematic-trace-solver@0.0.145", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-PH9V9mvJZLAa8zsDpfqigkDyY+BnzEnRPLtgdk4nPJq3tNtiSxiliQbf47+D8Jf1Whb/rUhfHh32AVe9aD1x2Q=="],
 
     "@tscircuit/simple-3d-svg": ["@tscircuit/simple-3d-svg@0.0.41", "", { "dependencies": { "fast-xml-parser": "^5.2.5", "fflate": "^0.8.2" } }, "sha512-2iwhHhMLElq5t0fcC0Gr7cCpZhEOAKh+6NN0NIJ9YWUCcsB7UN8uYko7jqNTxDlYOe6E0ZYaDZWsQ3amOZ3dlw=="],
 
@@ -623,6 +624,8 @@
     "jscad-electronics/react": ["react@19.1.0", "", {}, "sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg=="],
 
     "loose-envify/js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
+
+    "tscircuit/@tscircuit/schematic-trace-solver": ["@tscircuit/schematic-trace-solver@0.0.140", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-exMiHEWd0t+7XucW9LLPACE8TUov12Ns2la7k9P31uHgMrrjm2PriOrttIWoXI7wPTV7F/3+uACeJUAJN+Y2BA=="],
 
     "tscircuit/circuit-to-svg": ["circuit-to-svg@0.0.400", "", { "dependencies": { "@types/node": "^22.5.5", "bun-types": "^1.1.40", "calculate-elbow": "0.0.12", "debug": "^4.4.3", "svg-path-commander": "^2.1.11", "svgson": "^5.3.1", "transformation-matrix": "^2.16.1" }, "peerDependencies": { "@tscircuit/alphabet": "*" } }, "sha512-Jw4MVukusbaLLy3q1lDpFi38HmjNbAu7o5Y8bCRvhwmBe6fLzftty57zSwqG53fRqe3otzFVYRJ6U+PjIHzMag=="],
 
